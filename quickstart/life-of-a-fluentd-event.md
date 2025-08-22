@@ -23,36 +23,11 @@
       * matching rules / **Event** data is routed -- to a -- specific **Output**
         * == -- via -- plugin parameters
 
-* _Example:_ TODO: set up the example
+* _Example:_ [here](examples/basicSetUp)
   * [`in_http`](../input/http.md) plugins
-    * == listen for HTTP Requests
   * [`out_stdout`](../output/stdout.md) plugins
- 
-    ```text, title=configurationFile
-    <source>
-      @type http        // -- for -- `http` input 
-      port 8888         // HTTP server will be listening | TCP port `8888` 
-      bind 0.0.0.0
-    </source>
-    ```
-
-    ```text, title=matchingRule
-    <match test.cycle>      // rule: incoming rule / tag == test.cycle 
-      @type stdout          // incoming requests are printed | standard output 
-    </match>
-    ```
-
-  * if you want to test -> use `curl`
-
-    ```text
-    $ curl -i -X POST -d 'json={"action":"login","user":2}' http://localhost:8888/test.cycle
-    HTTP/1.1 200 OK
-    Content-type: text/plain
-    Connection: Keep-Alive
-    Content-length: 0
-    ```
   * Fluentd's logs
-
+    TODO: what to run?
     ```text
     $ fluentd -c in_http.conf
     2019-12-16 18:58:15 +0900 [info]: parsing config file is succeeded path="in_http.conf"
@@ -119,48 +94,11 @@
     * pass an event OR 
     * reject an event
 
-* _Example:_ ONLY show 1 `login` message -- TODO: set up the example
-
-    ```text, title=configurationFile
-    <source>
-      @type http
-      port 8888
-      bind 0.0.0.0
-    </source>
-    
-    // BEFORE match rule
-    <filter test.cycle>
-      @type grep            // based on type
-      <exclude>             // reject user **logout** action
-        key action
-        pattern ^logout$
-      </exclude>
-    </filter>
-    
-    <match test.cycle>
-      @type stdout
-    </match>
-    ```
+* _Example:_ ONLY show 1 `login` message -- [here](examples/processingEvents/filters) --
 
     ![Visualization](../.gitbook/assets/screen-shot-2021-03-16-at-12.50.12-pm.png)
 
-    if you want to test -> use `curl`
-
-    ```text
-    $ curl -i -X POST -d 'json={"action":"login","user":2}' http://localhost:8888/test.cycle
-    HTTP/1.1 200 OK
-    Content-type: text/plain
-    Connection: Keep-Alive
-    Content-length: 0
-    
-    $ curl -i -X POST -d 'json={"action":"logout","user":2}' http://localhost:8888/test.cycle
-    HTTP/1.1 200 OK
-    Content-type: text/plain
-    Connection: Keep-Alive
-    Content-length: 0
-    ```
-
-    `logout` event has been discarded:
+    `logout` event is discarded
 
     ```text
     $ fluentd -c in_http.conf
@@ -202,38 +140,7 @@
     * NOT follow the top-to-bottom order
     * == linked references
 
-* _Example:_
-
-    ```text, title=configurationFile
-    <source>
-      @type http
-      bind 0.0.0.0
-      port 8888
-      @label @STAGING
-    </source>
-    
-    <filter test.cycle>
-      @type grep
-      <exclude>
-        key action
-        pattern ^login$
-      </exclude>
-    </filter>
-    
-    <label @STAGING>             // | @STAGING, **Routing Engine** keep on processing the events / reported | **Source**
-      <filter test.cycle>
-        @type grep
-        <exclude>
-          key action
-          pattern ^logout$
-        </exclude>
-      </filter>
-    
-      <match test.cycle>
-        @type stdout
-      </match>
-    </label>
-    ```
+* _Example:_ [here](examples/processingEvents/labels)
 
     ![Visualization](../.gitbook/assets/screen-shot-2021-03-16-at-12.51.26-pm.png)
 

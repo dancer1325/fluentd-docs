@@ -1,0 +1,7 @@
+###
+POST http://localhost:8888/test.cycle
+Content-type: text/plain
+Connection: Keep-Alive
+Content-length: 0
+
+json={"action":"login","user":2}
