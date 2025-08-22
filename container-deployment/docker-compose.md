@@ -1,88 +1,27 @@
 # Docker Compose
 
-This article explains how to collect [Docker](https://www.docker.com/) logs and propagate them to EFK \(Elasticsearch + Fluentd + Kibana\) stack. The example uses [Docker Compose](https://docs.docker.com/compose/) for setting up multiple containers.
+* goal
+  * how to 
+    * collect Apache HTTP server daemon (`httpd`) logs
+    * propagate Docker logs -- to -- EFK (Elasticsearch + Fluentd + Kibana) stack
 
-![Kibana](../.gitbook/assets/7.10_kibana-homepage.png)
-
-[Elasticsearch](https://www.elastic.co/products/elasticsearch) had been an open-source search engine known for its ease of use. [Kibana](https://www.elastic.co/products/kibana) had been an open-source Web UI that makes Elasticsearch user-friendly for marketers, engineers and data scientists alike.
-
-NOTE: Since v7.11, These products are distributed under non open-source license (Dual licensed under Server Side Public License and Elastic License)
-
-
-By combining these three tools EFK \(Elasticsearch + Fluentd + Kibana\) we get a scalable, flexible, easy to use log collection and analytics pipeline. In this article, we will set up four \(4\) containers, each includes:
-
-* [Apache HTTP Server](https://hub.docker.com/_/httpd/)
-* [Fluentd](https://hub.docker.com/r/fluent/fluentd/)
-* [Elasticsearch](https://hub.docker.com/_/elasticsearch/)
-* [Kibana](https://hub.docker.com/_/kibana/)
-
-All the logs of `httpd` will be ingested into Elasticsearch + Kibana, via Fluentd.
+* approach
+  * 4 containers
+    * [Apache HTTP Server](https://hub.docker.com/_/httpd/)
+    * [Fluentd](https://hub.docker.com/r/fluent/fluentd/)
+    * [Elasticsearch](https://hub.docker.com/_/elasticsearch/)
+    * [Kibana](https://hub.docker.com/_/kibana/)
 
 ## Prerequisites: Docker
-
-Please download and install Docker / Docker Compose. Well, that's it :\)
 
 * [Docker Installation](https://docs.docker.com/engine/installation/)
 
 ## Step 0: Create `docker-compose.yml`
 
-Create `docker-compose.yml` for [Docker Compose](https://docs.docker.com/compose/overview/). Docker Compose is a tool for defining and running multi-container Docker applications.
-
-With the YAML file below, you can create and start all the services \(in this case, Apache, Fluentd, Elasticsearch, Kibana\) by one command:
-
-```text
-services:
-  web:
-    image: httpd
-    ports:
-      - "8080:80"
-    depends_on:
-      - fluentd
-    logging:
-      driver: "fluentd"
-      options:
-        fluentd-address: localhost:24224
-        tag: httpd.access
-
-  fluentd:
-    build: ./fluentd
-    volumes:
-      - ./fluentd/conf:/fluentd/etc
-    depends_on:
-      # Launch fluentd after that elasticsearch is ready to connect
-      elasticsearch:
-        condition: service_healthy
-    ports:
-      - "24224:24224"
-      - "24224:24224/udp"
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.1
-    container_name: elasticsearch
-    hostname: elasticsearch
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false # Disable security for testing
-    healthcheck:
-      # Check whether service is ready
-      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
-      interval: 10s
-      retries: 5
-      timeout: 5s
-    ports:
-      - 9200:9200
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.17.1
-    depends_on:
-      # Launch fluentd after that elasticsearch is ready to connect
-      elasticsearch:
-        condition: service_healthy
-    ports:
-      - "5601:5601"
-```
-
-The `logging` section \(check [Docker Compose documentation](https://docs.docker.com/compose/compose-file/compose-file-v3/#logging)\) of `web` container specifies [Docker Fluentd Logging Driver](https://docs.docker.com/engine/admin/logging/fluentd/) as a default container logging driver. All the logs from the `web` container will automatically be forwarded to `host:port` specified by `fluentd-address`.
+* `logging`
+  * [services' attribute](https://docs.docker.com/reference/compose-file/services/#logging)
+  * == [Docker Fluentd Logging Driver](https://docs.docker.com/engine/admin/logging/fluentd/)
+  * 👀ALL `web` container's logs are AUTOMATICALLY forwarded -- , thanks to `logging.options.fluentd-address`, to -- `host:port`👀
 
 ## Step 1: Create Fluentd Image with your Config + Plugin
 
@@ -171,12 +110,3 @@ Specify `fluentd-*` to `Index pattern` and click `Save data view to Kibana`.
 Then, go to `Discover` tab to check the logs. As you can see, logs are properly collected into the Elasticsearch + Kibana, via Fluentd.
 
 ![Kibana Discover](../.gitbook/assets/8.17_efk-kibana-discover.png)
-
-## Learn More
-
-* [Fluentd: Architecture](https://www.fluentd.org/architecture)
-* [Fluentd: Get Started](../quickstart/)
-* [Downloading Fluentd](http://www.fluentd.org/download)
-
-If this article is incorrect or outdated, or omits critical information, please [let us know](https://github.com/fluent/fluentd-docs-gitbook/issues?state=open). [Fluentd](http://www.fluentd.org/) is an open-source project under [Cloud Native Computing Foundation \(CNCF\)](https://cncf.io/). All components are available under the Apache 2 License.
-
