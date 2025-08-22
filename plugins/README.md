@@ -1,0 +1,10 @@
+* 👀Fluentd's types of plugins👀
+  * [Input](../input/)
+  * [Parser](../parser/)
+  * [Filter](../filter/)
+  * [Output](../output)
+  * [Formatter](../formatter/)
+  * [Storage](../storage/)
+  * [Service Discovery](../service_discovery/)
+  * [Buffer](../buffer/)
+  * [Metrics](../metrics/)
