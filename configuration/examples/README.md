@@ -1,5 +1,5 @@
 ## how to run locally?
-* [requirements](../../../installation/README.md)
+* [requirements](../../installation/README.md)
 * | this path,
   * `fluentd -c ./chooseSomeFluentdConfigFile.conf -vv`
 
