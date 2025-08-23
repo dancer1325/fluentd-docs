@@ -73,7 +73,7 @@
 | :--- | :--- | :--- |
 | bool | false | 0.14.0 |
 
-Adds `HTTP_` prefix headers to the record.
+* adds `HTTP_` prefix headers | record
 
 ### `add_remote_addr`
 
@@ -93,22 +93,26 @@ Adds `HTTP_` prefix headers to the record.
 | :--- | :--- | :--- |
 | array | nil\(disabled\) | 0.14.0 |
 
-Whitelist domains for CORS.
+* CORS' whitelist domain 
 
-If you set `["domain1", "domain2"]` to `cors_allow_origins`, `in_http` returns `403` to access from other domains. Since Fluentd v1.2.6, you can use a wildcard character `*` to allow requests from any origins.
+* if you set `["domain1", "domain2"]` == `cors_allow_origins` -> `in_http` returns `403` | OTHER domains
+* ALLOWED values
+  * `*`
+    * allow
+      * requests -- from -- ANY origins
+    * requirements
+      * Fluentd v1.2.6,  
+  * empty
+    * prevent 
+      * rejection of 
+        * non-cross-origin requests OR
+        * requests from non-browser clients
+    * if you want to allow 
+      * | Fluentd v1.19.0, 
+        * set it 
+      * | v1.19.0-,
+        * set `nil` OR `*`
 
-Since v1.19.0, Fluentd allows empty `Origin` header requests to prevent rejection of non-cross-origin requests or requests from non-browser clients such as apps or scripts.
-Before v1.19.0, you need to include `nil` or `*` to allow empty `Origin` header requests.
-
-Example:
-
-```text
-<source>
-  @type http
-  port 9880
-  cors_allow_origins ["*"]
-</source>
-```
 
 ### `cors_allow_credentials`
 
@@ -209,15 +213,7 @@ $ curl -X POST -d "msgpack=$msgpack" http://localhost:9880/app.log
   * recognizes
     * incoming requests' HTTP `Content-Type` header 
 
-* 👀if you use the default `<parse>` setting -> the data format -- depends on the -- `Content-Type`👀
-(If you set the `<parse>` directive to use a specific Parser, the `Content-Type` is not used).
-
-By default `curl` uses `-H "Content-Type: application/x-www-form-urlencoded"`, which allows the use of the prefix `json=`, `ndjson=`, and `msgpack=` as seen on the previous examples.
-
-On the other hand, some Media Types other than `application/x-www-form-urlencoded` support specific formats.
-If those Media Types are specified with `Content-Type: `, the prefix such as `json=` is not necessary for posting data.
-
-Here is the list of supported Media Types:
+* if you use the default `<parse>` setting -> 👀the data format -- depends on the -- `Content-Type`👀
 
 | Media Types              | data format | version |
 | :---                     | :---        | :---    |
@@ -226,21 +222,9 @@ Here is the list of supported Media Types:
 | `application/msgpack`    | MessagePack | -       |
 | `application/x-ndjson`   | NDJSON      | 1.14.5  |
 
-Examples:
+* if you set the `<parse>` == specific Parser -> ❌the `Content-Type` is NOT used❌
 
-```bash
-curl -X POST -d '{"foo":"bar"}' -H 'Content-Type: application/json' \
-  http://localhost:9880/app.log
-```
-
-```bash
-msgpack=`echo -e "\x81\xa3foo\xa3bar"`
-curl -X POST -d "$msgpack" -H 'Content-Type: application/msgpack' \
-  http://localhost:9880/app.log
-```
-
-Also, you can use `multipart/form-data`.
-For more details about `multipart/form-data`, please see [Why `in_http` removes '+' from my log](http.md#why-in_http-removes--from-my-log).
+* [how to use `multipart/form-data`](http.md#why-in_http-removes--from-my-log)
 
 ### handle OTHER formats -- via -- parser plugins
 
@@ -254,18 +238,12 @@ For more details about `multipart/form-data`, please see [Why `in_http` removes 
 </source>
 ```
 
-Now you can post custom-format records like this:
+* [SUPPORTED formats](../parser/)
 
-```text
-# This will be parsed into {"field1":"123456","field2":"awesome"}
-$ curl -X POST -d '123456:awesome' http://localhost:9880/app.log
-```
-
-Many other formats \(e.g. `csv`/`syslog`/`nginx`\) are also supported
-* For the full list of supported formats, see [Parser Plugin Overview](../parser/).
-
-NOTE: Some parser plugins do not support the [batch mode](http.md#handle-large-data-with-batch-mode)
-* So, if you want to use bulk insertion for handling a large data set, please consider keeping the default JSON \(or MessagePack\) format or write batch mode supported parser \(return array object\).
+* parser plugins / ❌NOT support the [batch mode](http.md#handle-large-data-with-batch-mode)❌
+  * if you want to use bulk insertion / handle a large data set -> 
+    * keep the default JSON (or MessagePack) format OR
+    * write batch mode supported parser (return array object)
 
 ## Enhance Performance
 

@@ -20,7 +20,7 @@ ndjson={"k1":"v1"}
 POST http://localhost:9880/app.log
 Content-Type: application/x-www-form-urlencoded
 
-msgpack=msgpack=\x81\xa3foo\xa3bar
+msgpack=\x81\xa3foo\xa3bar
 
 ## 2. Content-Type: application/json        -> NO required to specify the format
 ### 2.1 POST JSON data -- via -- tag == "app.log"
@@ -42,3 +42,27 @@ X-Forwarded-For: host1, host2
 X-Forwarded-For: host3
 
 {"foo":"bar"}
+
+### 5. if you use the default <parse> -> data format -- depends on the -- `Content-Type`
+### 5.1 Content-Type: application/msgpack
+# TODO: incoming event is invalid
+POST http://localhost:9880/app.log
+Content-Type: application/msgpack
+
+msgpack=\x81\xa3foo\xa3bar
+
+### 5.2 Content-Type: application/x-ndjson
+POST http://localhost:9880/app.log
+Content-Type: application/x-ndjson
+
+x-ndjson={"k1":"v1"}
+{"k2":"v2"}
+
+### 6. handle OTHER formats -- via -- parser plugins
+POST http://localhost:9880/app.log
+Content-Type: application/json
+
+{"123456":"awesome"}
+
+### 7. cors_allow_origins
+
