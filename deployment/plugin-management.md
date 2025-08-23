@@ -68,9 +68,13 @@ fluentd -p /path/to/plugin
 
 You can specify the `-p` option more than once.
 
-## Add a Plugin via `/etc/fluent/plugin`
+## Add a Plugin | "/etc/fluent/plugin"
 
-By default, Fluentd adds the `/etc/fluent/plugin` directory to its load path. Thus, any additional plugins that are placed in `/etc/fluent/plugin` will be loaded automatically.
+* "/etc/fluent/plugin"
+  * by default,
+    * plugin directory
+      * == 👀Fluentd adds this directory | its load path👀
+      * if you add a plugin | this directory -> loaded AUTOMATICALLY
 
 ### If Using `td-agent`, Use `/etc/td-agent/plugin`
 

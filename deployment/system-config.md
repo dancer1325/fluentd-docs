@@ -1,10 +1,15 @@
 # System Configuration
 
-This article describes Fluentd's system configurations for the `<system>` section and command-line options.
+* goal
+  * Fluentd's 
+    * `<system>` section
+    * system CL options
 
 ## Overview
 
-System Configuration is one way to set up system-wide configuration such as enabling RPC, multiple workers, etc.
+* allows
+  * set up system-wide configuration
+    * _Example:_ enable RPC, multiple workers, etc.
 
 ## Parameters
 
@@ -14,7 +19,7 @@ System Configuration is one way to set up system-wide configuration such as enab
 | :--- | :--- | :--- |
 | integer | 1 | 0.14.12 |
 
-Specifies the number of workers.
+* == number of workers
 
 ### `restart_worker_interval`
 
