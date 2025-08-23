@@ -42,25 +42,19 @@
 
 ### `@log_level`
 
-* TODO: This parameter specifies the plugin-specific logging level. The default log level is `info`. Global log level can be specified by setting `log_level` in `<system>` section or with `-v/-q` command line arguments. The `@log_level` parameter overrides the logging level only for the specified plugin instance.
+* == ⚠️plugin-specific⚠️ logging level
+  * by default,
+    * `info`
+  * override GLOBAL log leve | plugin
 
-```text
-<system>
-  log_level info
-</system>
+* ways to set GLOBAL log level
+  * `log_level` | `<system>` section OR
+  * `-v/-q` CL arguments
 
-<source>
-  # ...
-  @log_level debug # shows debug log only for this plugin
-</source>
-```
+* uses
+  * debugging
 
-The main purposes of this parameter are:
-
-1. to suppress too many logs for that plugin; and,
-2. to show the debug logs to help in the debugging process.
-
-Please see the [logging article](../deployment/logging.md) for further details.
+* see [logging article](../deployment/logging.md)
 
 ## Plugin Parameters / Emit Events
 
