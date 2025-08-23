@@ -81,16 +81,11 @@ Adds `HTTP_` prefix headers to the record.
 | :--- | :--- | :--- |
 | bool | false | 0.14.0 |
 
-Adds `REMOTE_ADDR` field to the record. The value of `REMOTE_ADDR` is the client's address.
+* adds `REMOTE_ADDR` field | record
+* `REMOTE_ADDR`'s value
+  * == client's address
 
-If your system set multiple `X-Forwarded-For` headers in the request, `in_http` uses the first one. For example:
-
-```text
-X-Forwarded-For: host1, host2
-X-Forwarded-For: host3
-```
-
-If the above multiple headers are sent, the value of `REMOTE_ADDR` will be `host1`.
+* ⚠️if request set MULTIPLE request's headers `X-Forwarded-For` -> `in_http` uses the FIRST one⚠️
 
 ### `cors_allow_origins`
 

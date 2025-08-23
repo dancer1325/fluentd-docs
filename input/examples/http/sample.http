@@ -34,3 +34,11 @@ POST http://localhost:9880/app.log?time=1518756037.3137116
 Content-Type: application/json
 
 {"foo":"bar"}
+
+### 4. if request set MULTIPLE request's headers `X-Forwarded-For` -> `in_http` uses the FIRST one
+POST http://localhost:9880/app.log
+Content-Type: application/json
+X-Forwarded-For: host1, host2
+X-Forwarded-For: host3
+
+{"foo":"bar"}
