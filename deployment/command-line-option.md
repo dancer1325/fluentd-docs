@@ -7,48 +7,48 @@
 
 * `fluentd -h`
 
-```text
-Usage: fluentd [options]
-    -s, --setup [DIR=/etc/fluent]    install sample configuration file to the directory
-    -c, --config PATH                config file path (default: /etc/fluent/fluent.conf)
-        --dry-run                    Check fluentd setup is correct or not
-        --show-plugin-config=PLUGIN  [DEPRECATED] Show PLUGIN configuration and exit(ex: input:dummy)
-    -p, --plugin DIR                 add plugin directory
-    -I PATH                          add library path
-    -r NAME                          load library
-    -d, --daemon PIDFILE             daemonize fluent process
-        --under-supervisor           run fluent worker under supervisor (this option is NOT for users)
-        --no-supervisor              run fluent worker without supervisor
-        --workers NUM                specify the number of workers under supervisor
-        --user USER                  change user
-        --group GROUP                change group
-        --umask UMASK                change umask
-    -o, --log PATH                   log file path
-        --log-rotate-age AGE         generations to keep rotated log files
-        --log-rotate-size BYTES      sets the byte size to rotate log files
-        --log-event-verbose          enable log events during process startup/shutdown
-    -i CONFIG_STRING,                inline config which is appended to the config file on-the-fly
-        --inline-config
-        --emit-error-log-interval SECONDS
-                                     suppress interval seconds of emit error logs
-        --suppress-repeated-stacktrace [VALUE]
-                                     suppress repeated stacktrace
-        --without-source             invoke a fluentd without input plugins
-        --with-source-only           Invoke a fluentd only with input plugins. The data is stored in a temporary buffer. Send SIGWINCH to cancel this mode and process the data (Not supported on Windows).
-        --use-v1-config              Use v1 configuration format (default)
-        --use-v0-config              Use v0 configuration format
-        --strict-config-value        Parse config values strictly
-        --enable-input-metrics       [DEPRECATED] Enable input plugin metrics on fluentd
-        --disable-input-metrics      Disable input plugin metrics on fluentd
-        --enable-size-metrics        Enable plugin record size metrics on fluentd
-    -v, --verbose                    increase verbose level (-v: debug, -vv: trace)
-    -q, --quiet                      decrease verbose level (-q: warn, -qq: error)
-        --suppress-config-dump       suppress config dumping when fluentd starts
-    -g, --gemfile GEMFILE            Gemfile path
-    -G, --gem-path GEM_INSTALL_PATH  Gemfile install path (default: $(dirname $gemfile)/vendor/bundle)
-        --conf-encoding ENCODING     specify configuration file encoding
-        --disable-shared-socket      Don't open shared socket for multiple workers
-```
+    ```text
+    Usage: fluentd [options]
+        -s, --setup [DIR=/etc/fluent]    install sample configuration file to the directory
+        -c, --config PATH                config file path (default: /etc/fluent/fluent.conf)
+            --dry-run                    Check fluentd setup is correct or not
+            --show-plugin-config=PLUGIN  [DEPRECATED] Show PLUGIN configuration and exit(ex: input:dummy)
+        -p, --plugin DIR                 add plugin directory
+        -I PATH                          add library path
+        -r NAME                          load library
+        -d, --daemon PIDFILE             daemonize fluent process
+            --under-supervisor           run fluent worker under supervisor (this option is NOT for users)
+            --no-supervisor              run fluent worker without supervisor
+            --workers NUM                specify the number of workers under supervisor
+            --user USER                  change user
+            --group GROUP                change group
+            --umask UMASK                change umask
+        -o, --log PATH                   log file path
+            --log-rotate-age AGE         generations to keep rotated log files
+            --log-rotate-size BYTES      sets the byte size to rotate log files
+            --log-event-verbose          enable log events during process startup/shutdown
+        -i CONFIG_STRING,                inline config which is appended to the config file on-the-fly
+            --inline-config
+            --emit-error-log-interval SECONDS
+                                         suppress interval seconds of emit error logs
+            --suppress-repeated-stacktrace [VALUE]
+                                         suppress repeated stacktrace
+            --without-source             invoke a fluentd without input plugins
+            --with-source-only           Invoke a fluentd only with input plugins. The data is stored in a temporary buffer. Send SIGWINCH to cancel this mode and process the data (Not supported on Windows).
+            --use-v1-config              Use v1 configuration format (default)
+            --use-v0-config              Use v0 configuration format
+            --strict-config-value        Parse config values strictly
+            --enable-input-metrics       [DEPRECATED] Enable input plugin metrics on fluentd
+            --disable-input-metrics      Disable input plugin metrics on fluentd
+            --enable-size-metrics        Enable plugin record size metrics on fluentd
+        -v, --verbose                    increase verbose level (-v: debug, -vv: trace)
+        -q, --quiet                      decrease verbose level (-q: warn, -qq: error)
+            --suppress-config-dump       suppress config dumping when fluentd starts
+        -g, --gemfile GEMFILE            Gemfile path
+        -G, --gem-path GEM_INSTALL_PATH  Gemfile install path (default: $(dirname $gemfile)/vendor/bundle)
+            --conf-encoding ENCODING     specify configuration file encoding
+            --disable-shared-socket      Don't open shared socket for multiple workers
+    ```
 
 ### Important Options
 
@@ -84,21 +84,21 @@ Usage: fluentd [options]
 
 * `fluent-cat --help`
 
-```text
-Usage: fluent-cat [options] <tag>
-    -p, --port PORT                  fluent tcp port (default: 24224)
-    -h, --host HOST                  fluent host (default: 127.0.0.1)
-    -u, --unix                       use unix socket instead of tcp
-    -s, --socket PATH                unix socket path (default: /var/run/fluent/fluent.sock)
-    -f, --format FORMAT              input format (default: json)
-        --json                       same as: -f json
-        --msgpack                    same as: -f msgpack
-        --none                       same as: -f none
-        --message-key KEY            key field for none format (default: message)
-        --time-as-integer            Send time as integer for v0.12 or earlier
-        --retry-limit N              Specify the number of retry limit (default: 5)
-        --event-time TIME_STRING     Specify the time expression string (default: nil)
-```
+    ```text
+    Usage: fluent-cat [options] <tag>
+        -p, --port PORT                  fluent tcp port (default: 24224)
+        -h, --host HOST                  fluent host (default: 127.0.0.1)
+        -u, --unix                       use unix socket instead of tcp
+        -s, --socket PATH                unix socket path (default: /var/run/fluent/fluent.sock)
+        -f, --format FORMAT              input format (default: json)
+            --json                       same as: -f json
+            --msgpack                    same as: -f msgpack
+            --none                       same as: -f none
+            --message-key KEY            key field for none format (default: message)
+            --time-as-integer            Send time as integer for v0.12 or earlier
+            --retry-limit N              Specify the number of retry limit (default: 5)
+            --event-time TIME_STRING     Specify the time expression string (default: nil)
+    ```
 
 ### Example
 
@@ -110,32 +110,33 @@ Usage: fluent-cat [options] <tag>
 
 ## `fluent-plugin-config-format`
 
-* TODO: It generates the formatted configuration document with the specified format for a plugin.
+* generates the 
+  * formatted configuration document + plugin's specific format
 
-Here is its usage \(`fluent-plugin-config-format -h`\):
+* `fluent-plugin-config-format -h`
 
-```text
-Usage: fluent-plugin-config-format [options] <type> <name>
-
-Output plugin config definitions
-
-Arguments:
-        type: input,output,filter,buffer,parser,formatter,storage,service_discovery
-        name: registered plugin name
-
-Options:
-        --verbose                    Be verbose
-    -c, --compact                    Compact output
-    -f, --format=FORMAT              Specify format. (markdown,txt,json)
-    -I PATH                          Add PATH to $LOAD_PATH
-    -r NAME                          Load library
-    -p, --plugin=DIR                 Add plugin directory
-    -t, --table                      Use table syntax to dump parameters
-```
+    ```text
+    Usage: fluent-plugin-config-format [options] <type> <name>
+    
+    Output plugin config definitions
+    
+    Arguments:
+            type: input,output,filter,buffer,parser,formatter,storage,service_discovery
+            name: registered plugin name
+    
+    Options:
+            --verbose                    Be verbose
+        -c, --compact                    Compact output
+        -f, --format=FORMAT              Specify format. (markdown,txt,json)
+        -I PATH                          Add PATH to $LOAD_PATH
+        -r NAME                          Load library
+        -p, --plugin=DIR                 Add plugin directory
+        -t, --table                      Use table syntax to dump parameters
+    ```
 
 ### Example
 
-Generate a README style document from the plugin's config parameters:
+* TODO: Generate a README style document from the plugin's config parameters:
 
 ```text
 fluent-plugin-config-format output null
