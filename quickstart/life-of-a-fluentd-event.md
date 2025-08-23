@@ -53,15 +53,30 @@
 
 ## Event Structure
 
-* Fluentd's event ==
+* 💡Fluentd's event💡 ==
   * `tag`
     * == origin | event comes from
+    * == 👀`string` / 
+      * separated by `.`👀
+        * _Example:_ myapp.access
+      * accepts ALL non-period characters
+        * == 
+          * ❌!= `.`❌
+          * alphanumeric, symbols, spaces, ...
+        * recommendations
+          * use `^[a-z0-9_]+$`
+            * Reason:🧠SOMETIMES used -- by -- output destinations🧠
     * uses
       * route messages 
+      * Fluentd internal routing engine's directions
   * `time`
-    * == time | event happens / nanosecond resolution
+    * == time | event happens / 
+      * nanosecond resolution
+      * 's format == Unix time
+    * specified -- by -- input plugins
   * `record`
-    * == actual log -- as a -- JSON object
+    * == actual log
+    * == JSON object
 
 * input plugin
   * responsible for
