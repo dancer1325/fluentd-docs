@@ -29,105 +29,28 @@
 * ALLOWED |
   * [`<system>` directive](../configuration/config-file.md)
 
-### `<worker>` directive
+### `<worker>` == `<worker N>` directive
 
-Some plugins do not work with multi-process workers feature automatically, e.g. `in_tail`
-* However, these plugins can be configured to run on specific workers with `<worker N>` directive
-* `N` is a zero-based worker index.
+* uses
+  * plugins / NOT work AUTOMATICALLY with MULTI-process workers
+    * _Example:_ `in_tail`
 
-In the following example, the `in_tail` plugin will run only on worker 0 out of the 4 workers configured in the `<system>` directive:
+* `N`
+  * == zero-based worker index
 
-```text
-
-
-# <worker 1>, <worker 2> or <worker 3> is also ok
-```
-
-With `<worker>` directive, non-multi-process-ready plugins can seamlessly be run along with multi-process-ready plugins.
 * see [`<worker>`](../configuration/config-file.md#6-worker)
 
 ### `<worker N-M>` directive
 
-As of Fluentd v1.4.0, `<worker N-M>` syntax has been introduced:
+* requirements
+  * Fluentd v1.4.0
 
-```text
-<system>
-  workers 6
-</system>
-
-# work on worker 0 and worker 1
-<worker 0-1>
-  <source>
-    @type forward
-  </source>
-
-  <filter test>
-    @type record_transformer
-    enable_ruby
-    <record>
-      worker_id ${ENV['SERVERENGINE_WORKER_ID']}
-    </record>
-  </filter>
-
-  <match test>
-    @type stdout
-  </match>
-</worker>
-
-# work on worker 2 and worker 3
-<worker 2-3>
-  <source>
-    @type tcp
-    <parse>
-      @type none
-    </parse>
-    tag test
-  </source>
-
-  <filter test>
-    @type record_transformer
-    enable_ruby
-    <record>
-      worker_id ${ENV['SERVERENGINE_WORKER_ID']}
-    </record>
-  </filter>
-
-  <match test>
-    @type stdout
-  </match>
-</worker>
-
-# work on worker 4 and worker 5
-<worker 4-5>
-  <source>
-    @type udp
-    <parse>
-      @type none
-    </parse>
-    tag test
-  </source>
-
-  <filter test>
-    @type record_transformer
-    enable_ruby
-    <record>
-      worker_id ${ENV['SERVERENGINE_WORKER_ID']}
-    </record>
-  </filter>
-
-  <match test>
-    @type stdout
-  </match>
-</worker>
-```
-
-With this directive, you can specify multiple workers per worker directive.
 * see [`<worker>`](../configuration/config-file.md#6-worker)
 
 ## Operation
 
-Each worker consumes memory and disk space separately
-* Take care while configuring buffer spaces and monitoring memory/disk consumption.
+* EACH worker
+  * consumes SEPARATELY memory & disk space 
 
 ## Multi-Process Workers and Plugins
 
