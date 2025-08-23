@@ -362,96 +362,60 @@ Sending a `SIGHUP` signal will reload the config file.
   * ❌set `<match> .. <filter>` -> NEVER work❌
     * Reason: 🧠 events NEVER go -- through -- `<filter>`🧠
 
-## Supported Data Types for Values
+## Fluentd plugin's parameters ALLOWED types
 
-Each Fluentd plugin has its own specific set of parameters
-* For example, [`in_tail`](../input/tail.md) has parameters such as `rotate_wait` and `pos_file`
-* Each parameter has a specific type associated with it
-* The types are defined as follows:
+* `string`
+  * == field is parsed -- as a -- string
+    * == plugin decides how to process the string 
+  * MOST common
+  * ALLOWED literals
+    * non-quoted 1 line string 
+    * single-quoted string -- `'` --
+    * double-quoted string -- `"` --
+  * _Example:_ [here](https://github.com/fluent/fluentd/blob/master/example/v1_literal_example.conf)
+* `integer`
+  * == field is parsed -- as an -- integer
+* `float`
+  * == field is parsed -- as a -- float
+* `size`
+  * == field is parsed -- as the -- number of bytes
+  * notational variations
+    * `<INTEGER>k` or `<INTEGER>K`: number of kilobytes
+    * `<INTEGER>m` or `<INTEGER>M`: number of megabytes
+    * `<INTEGER>g` or `<INTEGER>G`: number of gigabytes
+    * `<INTEGER>t` or `<INTEGER>T`: number of terabytes
+    * else, parsed -- as an -- integer
+* `time`
+  * == field is parsed -- as a -- time duration
+    * `<INTEGER>s`: seconds
+    * `<INTEGER>m`: minutes
+    * `<INTEGER>h`: hours
+    * `<INTEGER>d`: days
+    * else, parsed -- as -- float
+      * uses
+        * specify sub-second
+* `array`
+  * == field is parsed -- as a -- JSON array
+    * Reason of JSON: 🧠ALL programming languages & infrastructure tools can generate JSON values🧠
+  * ALLOWED syntax
+    * normal: `["key1", "key2"]`
+    * shorthand: `key1,key2`
+* `hash`
+  * == field is parsed -- as a -- JSON object
+    * Reason of JSON: 🧠ALL programming languages & infrastructure tools can generate JSON values🧠
+  * ALLOWED syntax
+    * normal: `{"key1": "value1", "key2": "value2"}`
+    * shorthand: `key1:value1,key2:value2`
 
-* `string`: the field is parsed as a string. This is the most _generic_ type,
+## Check configuration File
 
-  where each plugin decides how to process the string.
-
-  * The `string` has three literals: non-quoted one line string, `'`
-
-    single-quoted string and `"` double-quoted string.
-
-  * See **Format Tips** section and [literal examples](https://github.com/fluent/fluentd/blob/master/example/v1_literal_example.conf).
-
-* `integer`: the field is parsed as an integer.
-* `float`: the field is parsed as a float.
-* `size`: the field is parsed as the number of bytes. There are several
-
-  notational variations:
-
-  * `<INTEGER>k` or `<INTEGER>K`: number of kilobytes
-  * `<INTEGER>m` or `<INTEGER>M`: number of megabytes
-  * `<INTEGER>g` or `<INTEGER>G`: number of gigabytes
-  * `<INTEGER>t` or `<INTEGER>T`: number of terabytes
-  * Otherwise, the field is parsed as an integer, and that integer is the
-
-    **number of bytes**.
-
-* `time`: the field is parsed as a time duration.
-  * `<INTEGER>s`: seconds
-  * `<INTEGER>m`: minutes
-  * `<INTEGER>h`: hours
-  * `<INTEGER>d`: days
-  * Otherwise, the field is parsed as **float**, and that float is the
-
-    **number of seconds**. This option is useful for specifying sub-second
-
-    time durations such as 0.1 \(0.1 second = 100 milliseconds\).
-* `array`: the field is parsed as a JSON array. It also supports the shorthand
-
-  syntax. These are the same values:
-
-  * normal: `["key1", "key2"]`
-  * shorthand: `key1,key2`
-
-* `hash`: the field is parsed as a JSON object. It also supports the shorthand
-
-  syntax. These are the same values:
-
-  * normal: `{"key1": "value1", "key2": "value2"}`
-  * shorthand: `key1:value1,key2:value2`
-
-The `array` and `hash` types are JSON because almost all programming languages and infrastructure tools can generate JSON values easily than any other unusual format.
-
-NOTE: Each parameter's type should be documented. If not, please let the plugin author know.
-
-## Common Plugin Parameters
-
-These parameters are reserved and are prefixed with an `@` symbol:
-
-* `@type`: specifies the plugin type
-* `@id`: specifies the plugin id. `in_monitor_agent` uses this value for
-
-  `plugin_id` field
-
-* `@label`: specifies the label symbol. See
-
-  [label](config-file.md#5.-group-filter-and-output-the-label-directive)
-
-  section.
-
-* `@log_level`: specifies per plugin log level. See [Per Plugin Log](../deployment/logging.md#per-plugin-log) section.
-
-The `type`, `id` and `log_level` parameters are supported for backward compatibility.
-
-## Check Configuration File
-
-The configuration file can be validated without starting the plugins using the `--dry-run` option:
+* validate the configuration file 💡WITHOUT starting the plugin💡
 
 ```text
 $ fluentd --dry-run -c fluent.conf
 ```
 
-
 ## Format Tips
-
-This section describes some useful features for the configuration file.
 
 ### Multiline support for " quoted string, array and hash values
 
@@ -532,6 +496,3 @@ The backslash `\` is interpreted as an escape character. You need `\` for settin
 ```text
 str_param   "foo\nbar" # \n is interpreted as actual LF character
 ```
-
-If this article is incorrect or outdated, or omits critical information, please [let us know](https://github.com/fluent/fluentd-docs-gitbook/issues?state=open). [Fluentd](http://www.fluentd.org/) is an open-source project under [Cloud Native Computing Foundation \(CNCF\)](https://cncf.io/). All components are available under the Apache 2 License.
-
