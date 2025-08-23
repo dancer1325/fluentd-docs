@@ -2,25 +2,20 @@
 
 ![](../.gitbook/assets/forward.png)
 
-The `in_forward` Input plugin listens to a TCP socket to receive the event stream. It also listens to a UDP socket to receive heartbeat messages. See also the **protocol** section for implementation details.
+* == `in_forward`
 
-This plugin is mainly used to receive event logs from other Fluentd instances, the `fluent-cat` command, or Fluentd client libraries. This is by far the most efficient way to retrieve the records.
+* == Input plugin /
+  * provides
+    * TCP endpoint / accept TCP packets
+  * allows
+    * listening |
+      * TCP socket / receive the event stream
+      * UDP socket / receive heartbeat messages
+  * 👀MOST efficient way -- to -- retrieve the records 👀
+  * uses
+    * receive event logs -- from -- OTHER Fluentd instances
 
-If you want to receive events from raw TCP payload, use `in_tcp` plugin instead.
-
-It is included in Fluentd's core.
-
-## Example Configuration
-
-```text
-<source>
-  @type forward
-  port 24224
-  bind 0.0.0.0
-</source>
-```
-
-Refer to the [Configuration File](../configuration/config-file.md) article for the basic structure and syntax of the configuration file.
+* if you want to receive raw TCP payload's events -> use `in_tcp` plugin
 
 ## Plugin Helpers
 
@@ -33,7 +28,7 @@ Refer to the [Configuration File](../configuration/config-file.md) article for t
 
 ### `@type`
 
-The value must be `forward`.
+* == `forward`
 
 ### `port`
 
@@ -41,7 +36,7 @@ The value must be `forward`.
 | :--- | :--- | :--- |
 | integer | 24224 | 0.14.0 |
 
-The port to listen to.
+* == port | listen to
 
 ### `bind`
 
@@ -49,7 +44,7 @@ The port to listen to.
 | :--- | :--- | :--- |
 | string | 0.0.0.0 \(all addresses\) | 0.14.0 |
 
-The bind address to listen to.
+* == bind address | listen to
 
 ### `tag`
 
@@ -57,7 +52,7 @@ The bind address to listen to.
 | :--- | :--- | :--- |
 | string | nil | 1.5.0 |
 
-`in_forward` uses incoming event's tag by default \(See Protocol Section\). If the `tag` parameter is set, its value is used instead.
+* TODO: `in_forward` uses incoming event's tag by default \(See Protocol Section\). If the `tag` parameter is set, its value is used instead.
 
 ### `add_tag_prefix`
 

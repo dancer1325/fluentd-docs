@@ -2,97 +2,38 @@
 
 ![](../.gitbook/assets/http.png)
 
-The `in_http` Input plugin allows you to send events through HTTP requests. Using this plugin, you can trivially launch a REST endpoint to gather data.
-
-## Configuration
-
-Here is a sample configuration:
-
-```text
-<source>
-  @type http
-  port 9880
-  bind 0.0.0.0
-  body_size_limit 32m
-  keepalive_timeout 10s
-</source>
-```
-
-For the full list of the configurable options, see the [Parameters](http.md#parameters) section.
+* == `in_http`
+* == Input plugin /
+  * provides
+    * HTTP endpoint / accept incoming HTTP messages
+  * allows
+    * send events -- through -- HTTP requests
+  * uses
+    * launch a REST endpoint / gather data
 
 ## Basic Usage
 
-By default, the data format depends on the `Content-Type`.
-In summary, you can send the following format.
+* data format
+  * 👀-- depends on the -- `Content-Type`👀
+    * if `Content-Type: application/x-www-form-urlencoded` -> you need to specify data format -- via -- prefix
+      * `json=`
+      * `ndjson=`
+      * `msgpack=`
+    * if `Content-Type: application/json` -> NO specify prefix
+  * see [How to use HTTP Content-Type Header](http.md#how-to-use-http-content-type-header)
 
-* `json`
-* `ndjson`
-* `msgpack`
-
-Here is a simple example to post a record using `curl`, which uses the default Content-Type `application/x-www-form-urlencoded`.
-
-Example: post JSON data with the tag "app.log":
-
-```bash
-curl -X POST -d 'json={"foo":"bar"}' http://localhost:9880/app.log
-```
-
-Example: post NDJSON data with the tag "app.log":
-
-```bash
-ndjson=`echo -e 'ndjson={"k1":"v1"}\n{"k2":"v2"}\n'`
-curl -X POST -d "$ndjson" http://localhost:9880/app.log
-```
-
-Example: post MessagePack data with the tag "app.log":
-
-```bash
-msgpack=`echo -e "msgpack=\x81\xa3foo\xa3bar"`
-curl -X POST -d "$msgpack" http://localhost:9880/app.log
-```
-
-Some Media Types other than `application/x-www-form-urlencoded` support specific formats.
-If those Media Types are specified with `Content-Type: `, the prefix such as `json=` is not necessary for posting data.
-
-Example: Post JSON data with `Content-Type: application/json`:
-
-```bash
-curl -X POST -d '{"foo":"bar"}' -H 'Content-Type: application/json' \
-  http://localhost:9880/app.log
-```
-
-**For more details regarding the message body syntax and `Content-Type` see [How to use HTTP Content-Type Header](http.md#how-to-use-http-content-type-header)**
-
-By default, timestamps are assigned to each record on arrival. You can override the timestamp using the `time` parameter:
-
-```text
-# Overwrite the timestamp to 2018-02-16 04:40:37.3137116
-$ curl -X POST -d 'json={"foo":"bar"}' \
-  http://localhost:9880/test.tag?time=1518756037.3137116
-```
-
-Here is another example in JavaScript:
-
-```text
-// Post a record using XMLHttpRequest
-var form = new FormData();
-form.set('json', JSON.stringify({"foo": "bar"}));
-
-var req = new XMLHttpRequest();
-req.open('POST', 'http://localhost:9880/debug.log');
-req.send(form);
-```
-
-
-For more advanced usage, please read the [Tips and Tricks](http.md#tips-and-tricks) section.
+* timestamp
+  * by default,
+    * | arrival, assigned / EACH record
+  * if you want to override -> use `time` parameter
 
 ## Parameters
 
-See [Common Parameters](../configuration/plugin-common-parameters.md).
+* [Common Parameters](../configuration/plugin-common-parameters.md)
 
 ### `@type` \(required\)
 
-The value must be `http`.
+* == `http`
 
 ### `port`
 
@@ -100,7 +41,7 @@ The value must be `http`.
 | :--- | :--- | :--- |
 | integer | 9880 | 0.14.0 |
 
-The port to listen to.
+* == port | listen to
 
 ### `bind`
 
@@ -108,7 +49,7 @@ The port to listen to.
 | :--- | :--- | :--- |
 | string | 0.0.0.0 \(all addresses\) | 0.14.0 |
 
-The bind address to listen to.
+* == bind address | listen to
 
 ### `body_size_limit`
 
@@ -116,7 +57,7 @@ The bind address to listen to.
 | :--- | :--- | :--- |
 | size | 32MB | 0.14.0 |
 
-The size limit of the POSTed element.
+* == POSTed element's MAX size
 
 ### `keepalive_timeout`
 
@@ -124,7 +65,7 @@ The size limit of the POSTed element.
 | :--- | :--- | :--- |
 | size | 10 \(seconds\) | 0.14.0 |
 
-The timeout limit for keeping the connection alive.
+* == timeout limit / keep the connection alive
 
 ### `add_http_headers`
 
@@ -264,6 +205,10 @@ $ curl -X POST -d "msgpack=$msgpack" http://localhost:9880/app.log
 ```
 
 ### How to use HTTP Content-Type header?
+
+* goal
+  * message body syntax + `Content-Type`
+
 
 `in_http` plugin recognizes HTTP `Content-Type` header in the incoming requests.
 

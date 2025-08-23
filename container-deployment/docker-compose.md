@@ -16,64 +16,26 @@
 
 * [Docker Installation](https://docs.docker.com/engine/installation/)
 
-## Step 0: Create `docker-compose.yml`
+## Step 0: Create ["docker-compose.yml"](example/viaDockerCompose/docker-compose.yml)
 
 * `logging`
   * [services' attribute](https://docs.docker.com/reference/compose-file/services/#logging)
   * == [Docker Fluentd Logging Driver](https://docs.docker.com/engine/admin/logging/fluentd/)
   * 👀ALL `web` container's logs are AUTOMATICALLY forwarded -- , thanks to `logging.options.fluentd-address`, to -- `host:port`👀
 
-## Step 1: Create Fluentd Image with your Config + Plugin
+## Step 1: Create Fluentd Image + Config + Plugin
 
-Create `fluentd/Dockerfile` with the following content using the Fluentd [official Docker image](https://hub.docker.com/r/fluent/fluentd/); and then, install the Elasticsearch plugin:
-
-```text
-# fluentd/Dockerfile
-
-FROM fluent/fluentd:edge-debian
-USER root
-RUN ["gem", "install", "fluent-plugin-elasticsearch", "--no-document", "--version", "5.4.3"]
-USER fluent
-```
-
-Then, create the Fluentd configuration file `fluentd/conf/fluent.conf`. The [`forward`](../input/forward.md) input plugin receives logs from the Docker logging driver and `elasticsearch` output plugin forwards these logs to Elasticsearch.
-
-```text
-# fluentd/conf/fluent.conf
-
-<source>
-  @type forward
-  port 24224
-  bind 0.0.0.0
-</source>
-
-<match *.**>
-  @type copy
-
-  <store>
-    @type elasticsearch
-    host elasticsearch
-    port 9200
-    logstash_format true
-    logstash_prefix fluentd
-    logstash_dateformat %Y%m%d
-    include_tag_key true
-    type_name access_log
-    tag_key @log_name
-    flush_interval 1s
-  </store>
-
-  <store>
-    @type stdout
-  </store>
-</match>
-```
-
-NOTE: The detail of used parameters for `@type elasticsearch`, see [Elasticsearch parameters section](../output/elasticsearch.md#parameters) and [fluent-plugin-elasticsearch](https://github.com/uken/fluent-plugin-elasticsearch) furthermore.
+* [Dockerfile](example/viaDockerCompose/fluentd/Dockerfile)
+* [Fluentd configuration file](example/viaDockerCompose/fluentd/conf/fluent.conf)
+  * [`forward`](../input/forward.md) input plugin
+    * receives logs -- from -- Docker logging driver
+  * `elasticsearch` output plugin
+    * forwards these logs -- to -- Elasticsearch
+    * see
+      * [Elasticsearch parameters section](../output/elasticsearch.md#parameters)
+      * [fluent-plugin-elasticsearch](https://github.com/uken/fluent-plugin-elasticsearch)
 
 ## Step 2: Start the Containers
-
-Let's start the containers:
 
 ```text
 $ docker compose up --detach

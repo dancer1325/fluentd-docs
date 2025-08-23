@@ -1,0 +1,32 @@
+## 1. Content-Type: application/x-www-form-urlencoded
+### POST JSON data -- via -- tag == "app.log"
+POST http://localhost:9880/app.log
+Content-Type: application/x-www-form-urlencoded
+
+json={"foo":"bar"}
+
+### post NDJSON data -- via -- tag == "app.log"
+POST http://localhost:9880/app.log
+Content-Type: application/x-www-form-urlencoded
+
+ndjson={"k1":"v1"}
+{"k2":"v2"}
+
+### post MessagePack data -- via -- tag == "app.log"
+POST http://localhost:9880/app.log
+Content-Type: application/x-www-form-urlencoded
+
+msgpack=msgpack=\x81\xa3foo\xa3bar
+
+## 2. Content-Type: application/json
+### 2.1 POST JSON data -- via -- tag == "app.log"
+POST http://localhost:9880/app.log
+Content-Type: application/json
+
+{"foo":"bar"}
+
+### 3. time parameter   -> override default one
+POST http://localhost:9880/app.log?time=1518756037.3137116
+Content-Type: application/json
+
+{"foo":"bar"}

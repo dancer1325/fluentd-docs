@@ -1,18 +1,7 @@
 # Filter Plugins
 
-Fluentd has nine \(9\) types of plugins:
-
-* [Input](../input/)
-* [Parser](../parser/)
-* [Filter](./)
-* [Output](../output/)
-* [Formatter](../formatter/)
-* [Storage](../storage/)
-* [Service Discovery](../service_discovery/)
-* [Buffer](../buffer/)
-* [Metrics](../metrics/)
-
-This article gives an overview of the Filter Plugin.
+* goal
+  * Fluentd's Filter Plugins
 
 ## Overview
 
