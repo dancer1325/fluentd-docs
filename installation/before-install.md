@@ -1,82 +1,94 @@
 # Before Installation
 
-Before installing Fluentd, make sure that your environment is properly set up to avoid any inconsistencies at a later stage.
+* 👀ALL are recommendations👀
 
-Follow these recommendations:
+## Set up NTP daemon | node
 
-* Set Up NTP
-* Increase the Maximum Number of File Descriptors
-* Optimize the Network Kernel Parameters
+* NTP
+  * == Network Time Protocol
+* _Example:_ 
+  * [`chrony`](https://chrony.tuxfamily.org/), 
+  * `ntpd`,
+  * [AWS-hosted NTP server](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/set-time.html) 
+* allows
+  * 👀have an accurate current timestamp👀
+    * ⚠️crucial | ALL production-grade logging services⚠️
 
-## Set Up NTP
+## Increase the MAXIMUM number of File Descriptors
 
-It is highly recommended that you set up an NTP daemon \(e.g. [`chrony`](https://chrony.tuxfamily.org/), `ntpd`, etc.\) on the node to have an accurate current timestamp. This is crucial for all the production-grade logging services.
+* `ulimit -n`
+  * check the existing configuration
+  * recommendations
+    * > 1024
 
-For Amazon Web Services users, we recommend using the [AWS-hosted NTP server](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/set-time.html).
+* steps
+  * ways
+    * add 
 
-## Increase the Maximum Number of File Descriptors
-
-Increase the maximum number of file descriptors. You can check the existing configuration using the `ulimit -n` command:
-
-```text
-$ ulimit -n
-65535
-```
-
-If your console shows `1024`, it is insufficient. Please add the following lines to your `/etc/security/limits.conf` file and reboot your machine:
-
-```text
-root soft nofile 65536
-root hard nofile 65536
-* soft nofile 65536
-* hard nofile 65536
-```
-
-If you are running fluentd under `systemd`, the option `LimitNOFILE=65536` can also be used. And, if you are using the `td-agent` package, this value is set up by default.
+      ```.conf, title=/etc/security/limits.conf
+      root soft nofile 65536
+      root hard nofile 65536
+      * soft nofile 65536
+      * hard nofile 65536
+      ```
+    * if you are running fluentd | `systemd` -> set `LimitNOFILE=65536`   
+  * reboot your machine
 
 ## Optimize the Network Kernel Parameters
 
-For high load environments with many Fluentd instances, add the following configuration to your `/etc/sysctl.conf` file:
+* goal
+  * MULTIPLE Fluentd instances / high load environments
 
-```text
-net.core.somaxconn = 1024
-net.core.netdev_max_backlog = 5000
-net.core.rmem_max = 16777216
-net.core.wmem_max = 16777216
-net.ipv4.tcp_wmem = 4096 12582912 16777216
-net.ipv4.tcp_rmem = 4096 12582912 16777216
-net.ipv4.tcp_max_syn_backlog = 8096
-net.ipv4.tcp_slow_start_after_idle = 0
-net.ipv4.tcp_tw_reuse = 1
-net.ipv4.ip_local_port_range = 10240 65535
-# If forward uses port 24224, reserve that port number for use as an ephemeral port.
-# If another port, e.g., monitor_agent uses port 24220, add a comma-separated list of port numbers.
-# net.ipv4.ip_local_reserved_ports = 24220,24224
-net.ipv4.ip_local_reserved_ports = 24224
-```
-
-Use `sysctl -p` command or reboot your node for the changes to take effect.
-
-These kernel options were originally taken from the presentation [How Netflix Tunes EC2 Instances for Performance](https://www.slideshare.net/brendangregg/how-netflix-tunes-ec2-instances-for-performance) by [Brendan Gregg](http://www.brendangregg.com/), Senior Performance Architect at AWS re:Invent 2017.
+* steps
+  * add 
+    ```.conf,title=/etc/sysctl.conf
+    net.core.somaxconn = 1024
+    net.core.netdev_max_backlog = 5000
+    net.core.rmem_max = 16777216
+    net.core.wmem_max = 16777216
+    net.ipv4.tcp_wmem = 4096 12582912 16777216
+    net.ipv4.tcp_rmem = 4096 12582912 16777216
+    net.ipv4.tcp_max_syn_backlog = 8096
+    net.ipv4.tcp_slow_start_after_idle = 0
+    net.ipv4.tcp_tw_reuse = 1
+    net.ipv4.ip_local_port_range = 10240 65535
+    # If forward uses port 24224, reserve that port number for use as an ephemeral port.
+    # If another port, e.g., monitor_agent uses port 24220, add a comma-separated list of port numbers.
+    # net.ipv4.ip_local_reserved_ports = 24220,24224
+    net.ipv4.ip_local_reserved_ports = 24224
+    ```
+    * see [How Netflix Tunes EC2 Instances for Performance](https://www.slideshare.net/brendangregg/how-netflix-tunes-ec2-instances-for-performance)
+  * `sysctl -p` OR reboot your node
 
 ## Use sticky bit symlink/hardlink protection
 
-**NOTE:** CentOS 7 or later, Ubuntu 18.04 \(bionic\) or later, and Debian GNU/Linux 10 \(buster\) or later are supported these parameters.
+* requirements
+  * OS
+    * CentOS 7+, OR
+    * Ubuntu 18.04+ OR
+    * Debian GNU/Linux 10+
 
-Fluentd sometimes uses predictable paths for dumping, writing files, and so on. This default settings for the protections are in `/etc/sysctl.d/10-link-restrictions.conf`, or `/usr/lib/sysctl.d/50-default.conf` or elsewhere.
+* "/etc/sysctl.d/10-link-restrictions.conf" OR "/usr/lib/sysctl.d/50-default.conf"
+  * protections' default settings 
 
-For symlink attack protection, check the following parameters are set to `1`:
+* symlink attack protection
+  * MUST have
 
-```text
-fs.protected_hardlinks = 1
-fs.protected_symlinks = 1
-```
+    ```text
+    fs.protected_hardlinks = 1
+    fs.protected_symlinks = 1
+    ```
 
-This settings are almost enough for time-of-check to time-of-use (TOCTOU, TOCTTOU or TOC/TOU) which are a class of software bugs.
+* `sysctl -p`
+  * reboot your node
 
-If you turned off these protections, please turn them on.
 
-Use `sysctl -p` command or reboot your node for the changes to take effect.
+## [jemalloc](http://www.canonware.com/jemalloc/)
 
-If this article is incorrect or outdated, or omits critical information, please [let us know](https://github.com/fluent/fluentd-docs-gitbook/issues?state=open). [Fluentd](http://www.fluentd.org/) is an open-source project under [Cloud Native Computing Foundation \(CNCF\)](https://cncf.io/). All components are available under the Apache 2 License.
-
+* use cases
+  * large deployments
+* avoid
+  * memory fragmentation
+* ALREADY included |
+  * [`rpm`](install-fluent-package/install-by-rpm-fluent-package.md) packages
+  * [`deb`](install-fluent-package/install-by-deb-fluent-package.md) packages
