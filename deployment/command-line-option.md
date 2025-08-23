@@ -1,10 +1,11 @@
 # Command Line Option
 
-This article describes the command-line tools and its options in `fluentd` project.
+* goal
+  * CL toolS
 
 ## `fluentd`
 
-Following are the fluentd command-line options \(`fluentd -h`\):
+* `fluentd -h`
 
 ```text
 Usage: fluentd [options]
@@ -51,23 +52,37 @@ Usage: fluentd [options]
 
 ### Important Options
 
-* `-g`, `--gemfile`: Fluentd starts with bundler-managed dependent plugins.
-* `--suppress-config-dump`: Fluentd starts without configuration dump. If you do not want to show the configuration in fluentd logs, e.g. it contains private keys, then this option is useful.
-* `--suppress-repeated-stacktrace`: If `true`, suppresses the stacktrace in fluentd logs. Since v0.12, this option is `true` by default.
-* `--without-source`: Fluentd starts without input plugins. This option is useful for flushing buffers with no new incoming events.
-* `--with-source-only` (Not supported on Windows): See [Source Only Mode](source-only-mode.md) for details.
-* `-i`, `--inline-config`: If fluentd is used on XaaS which does not support persistent disks, this option is useful.
-* `--no-supervisor`: If you want to use your supervisor tools, this option avoids double supervisor.
+* `-g`, `--gemfile`
+  * Fluentd starts with bundler-managed dependent plugins.
+* `--suppress-config-dump`
+  * Fluentd starts without configuration dump
+  * If you do not want to show the configuration in fluentd logs, e.g. it contains private keys, then this option is useful.
+* `--suppress-repeated-stacktrace`
+  * If `true`, suppresses the stacktrace in fluentd logs
+  * Since v0.12, this option is `true` by default.
+* `--without-source`
+  * Fluentd starts without input plugins
+  * This option is useful for flushing buffers with no new incoming events.
+* `--with-source-only`
+  * NOT supported | Windows
+  * see [Source Only Mode](source-only-mode.md)
+* `-i`, `--inline-config`
+  * if fluentd is used on XaaS which does not support persistent disks, this option is useful.
+* `--no-supervisor`
+  * if you want to use your supervisor tools, this option avoids double supervisor.
 
-### Set via Configuration File
+### vs Configuration File
 
-Some options can be set via `<system>` directive via configuration file. See [configuration file](../configuration/config-file.md) article for more on `<system>` directive.
+* SOME options can be set -- via -- [`<system>` directive](../configuration/config-file.md#4-system)
 
 ## `fluent-cat`
 
-The `fluent-cat` command sends an event to fluentd `in_forward`/`in_unix` plugin. This is particularly useful for testing.
+* 👀sends an event -- to -- Fluentd `in_forward`/`in_unix` plugin👀
 
-Here is its usage \(`fluent-cat --help`\):
+* use cases
+  * 💡testing💡
+
+* `fluent-cat --help`
 
 ```text
 Usage: fluent-cat [options] <tag>
@@ -87,21 +102,15 @@ Usage: fluent-cat [options] <tag>
 
 ### Example
 
-Send JSON message with `debug.log` tag to the local fluentd instance:
+* `echo '{"message":"hello"}' | fluent-cat debug.log`
+  * send JSON message / `debug.log` tag | local fluentd instance
 
-```text
-echo '{"message":"hello"}' | fluent-cat debug.log
-```
-
-Send JSON message to an instance of fluentd on another machine on the network:
-
-```text
-echo '{"message":"hello"}' | fluent-cat debug.log --host testserver --port 24225
-```
+* `echo '{"message":"hello"}' | fluent-cat debug.log --host testserver --port 24225`
+  * send JSON message | Fluentd's instance | ANOTHER machine
 
 ## `fluent-plugin-config-format`
 
-It generates the formatted configuration document with the specified format for a plugin.
+* TODO: It generates the formatted configuration document with the specified format for a plugin.
 
 Here is its usage \(`fluent-plugin-config-format -h`\):
 

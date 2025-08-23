@@ -25,12 +25,19 @@ $ export PATH="$PATH:$(gem environment | grep "EXECUTABLE DIRECTORY     # add ru
 ### Step 3: Run
 
 * `fluentd --setup ./fluent`
-  * check Fluentd is installed
+  * create Fluentd's sample configuration file "./fluent"
 
-* `fluentd -c ./fluent/fluent.conf -vv &`
+* `fluentd -c ./fluent/fluent.conf -vv`
   * starts Fluentd -- as a -- daemon 
+  * `-c ./fluent/fluent.conf`
+    * start Fluentd / configuration file | "./fluent/fluent.conf" 
+  * `-vv`
+    * verbose level / trace
   * `pkill -f fluentd`
-    * stop Fluentd daemon
+    * 👀stop Fluentd daemon👀
+  * Problems:
+    * Problem1: "adress ... ALREADY in use"
+      * Solution: check the process & kill ruby processes
 
 * `echo '{"json":"message"}' | fluent-cat debug.test`
   * Fluentd sends a message '{"json":"message"}' / `debug.test` tag
