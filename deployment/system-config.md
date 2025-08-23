@@ -136,7 +136,10 @@ Enables to get dump.
 | :--- | :--- | :--- |
 | string | nil | 0.14.0 |
 
-Specifies the process name.
+* == process name
+* ALLOWED ONLY | "configFile.conf"
+* requirements
+  * Ruby v2.1+
 
 ### `enable_msgpack_time_support`
 
