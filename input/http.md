@@ -15,7 +15,7 @@
 
 * data format
   * 👀-- depends on the -- `Content-Type`👀
-    * if `Content-Type: application/x-www-form-urlencoded` -> you need to specify data format -- via -- prefix
+    * ⚠️if `Content-Type: application/x-www-form-urlencoded` -> you need to specify data format -- via -- prefix⚠️
       * `json=`
       * `ndjson=`
       * `msgpack=`
@@ -186,7 +186,8 @@ Without `<transport tls>`, `in_http` uses HTTP.
 
 ### `<parse>` directive
 
-Use the parser plugin to parse the incoming data. See also [Handle other formats using parser plugins](http.md#handle-other-formats-using-parser-plugins) section.
+* parse  -- , via parser plugin, the -- incoming data 
+* [handle OTHER formats -- via -- parser plugins](http.md#handle-other-formats-using-parser-plugins)
 
 ### `format` \(deprecated\)
 
@@ -209,10 +210,11 @@ $ curl -X POST -d "msgpack=$msgpack" http://localhost:9880/app.log
 * goal
   * message body syntax + `Content-Type`
 
+* `in_http` plugin 
+  * recognizes
+    * incoming requests' HTTP `Content-Type` header 
 
-`in_http` plugin recognizes HTTP `Content-Type` header in the incoming requests.
-
-If you use the default `<parse>` setting, the data format depends on the `Content-Type`.
+* 👀if you use the default `<parse>` setting -> the data format -- depends on the -- `Content-Type`👀
 (If you set the `<parse>` directive to use a specific Parser, the `Content-Type` is not used).
 
 By default `curl` uses `-H "Content-Type: application/x-www-form-urlencoded"`, which allows the use of the prefix `json=`, `ndjson=`, and `msgpack=` as seen on the previous examples.
@@ -245,17 +247,14 @@ curl -X POST -d "$msgpack" -H 'Content-Type: application/msgpack' \
 Also, you can use `multipart/form-data`.
 For more details about `multipart/form-data`, please see [Why `in_http` removes '+' from my log](http.md#why-in_http-removes--from-my-log).
 
-### Handle Other Formats using Parser Plugins
+### handle OTHER formats -- via -- parser plugins
 
-You can handle various input formats by using the `<parse>` directive. For example, add the following settings to the configuration file:
-
-```text
+```.conf
 <source>
   @type http
   port 9880
   <parse>
-    @type regexp
-    expression /^(?<field1>\d+):(?<field2>\w+)$/
+    ...
   </parse>
 </source>
 ```
@@ -267,9 +266,11 @@ Now you can post custom-format records like this:
 $ curl -X POST -d '123456:awesome' http://localhost:9880/app.log
 ```
 
-Many other formats \(e.g. `csv`/`syslog`/`nginx`\) are also supported. For the full list of supported formats, see [Parser Plugin Overview](../parser/).
+Many other formats \(e.g. `csv`/`syslog`/`nginx`\) are also supported
+* For the full list of supported formats, see [Parser Plugin Overview](../parser/).
 
-NOTE: Some parser plugins do not support the [batch mode](http.md#handle-large-data-with-batch-mode). So, if you want to use bulk insertion for handling a large data set, please consider keeping the default JSON \(or MessagePack\) format or write batch mode supported parser \(return array object\).
+NOTE: Some parser plugins do not support the [batch mode](http.md#handle-large-data-with-batch-mode)
+* So, if you want to use bulk insertion for handling a large data set, please consider keeping the default JSON \(or MessagePack\) format or write batch mode supported parser \(return array object\).
 
 ## Enhance Performance
 

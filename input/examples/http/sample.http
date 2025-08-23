@@ -1,10 +1,12 @@
-## 1. Content-Type: application/x-www-form-urlencoded
+## 1. Content-Type: application/x-www-form-urlencoded -> specify data format -- via -- prefix
+## 1.1          json=
 ### POST JSON data -- via -- tag == "app.log"
 POST http://localhost:9880/app.log
 Content-Type: application/x-www-form-urlencoded
 
 json={"foo":"bar"}
 
+## 1.2          ndjson=
 ### post NDJSON data -- via -- tag == "app.log"
 POST http://localhost:9880/app.log
 Content-Type: application/x-www-form-urlencoded
@@ -12,13 +14,15 @@ Content-Type: application/x-www-form-urlencoded
 ndjson={"k1":"v1"}
 {"k2":"v2"}
 
+## 1.3          msgpack=
+# TODO: incoming event is invalid
 ### post MessagePack data -- via -- tag == "app.log"
 POST http://localhost:9880/app.log
 Content-Type: application/x-www-form-urlencoded
 
 msgpack=msgpack=\x81\xa3foo\xa3bar
 
-## 2. Content-Type: application/json
+## 2. Content-Type: application/json        -> NO required to specify the format
 ### 2.1 POST JSON data -- via -- tag == "app.log"
 POST http://localhost:9880/app.log
 Content-Type: application/json
