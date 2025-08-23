@@ -1,15 +1,7 @@
 # fluent-package v5 vs td-agent v4
 
-Fluentd is written in Ruby for flexibility, with performance-sensitive parts in C. However, some users may have difficulty installing and operating a Ruby daemon.
-
-That is why [Fluentd Project](https://www.fluentd.org/) provides **the stable distribution of Fluentd**, called `fluent-package` (formerly known as `td-agent`). The differences between Fluentd and `fluent-package` can be found [here](https://www.fluentd.org/faqs).
-
-This article explains the difference between `fluent-package` v5 and `td-agent` v4.
-
-{% hint style='danger' %}
-The series of td-agent had already reached End of Life (EOL). td-agent should not be newly installed because of no support, no new release and no security updates anymore.
-Use fluent-package instead!
-{% endhint %}
+* goal
+  * `fluent-package` v5 vs `td-agent` v4
 
 ## Supported Platforms
 
