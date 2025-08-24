@@ -6,33 +6,40 @@
 ## Overview
 
 * output plugins == 💡plugins / correspond -- to the -- `match` directive💡
+  * support >= 1 modes
+  * | v1.0,
+    * can control buffer chunking's keys DYNAMICALLY -- by -- configurations
+    * can configure buffer chunk keys -- as -- time + tag + key name of records
+  * split events | chunks / 
+    * ALL events | SAME chunk -> SAME chunk keys' values
 
-* Fluentd v1.0 output plugins
-  * have TODO: three \(3\) buffering and flushing modes:
+* chunk
+  * == collection of events / concatenated | 1! blob
 
-* **Non-Buffered** mode does not buffer data and write out results
-
-  immediately.
-
-* **Synchronous Buffered** mode has "staged" buffer chunks \(a chunk is a
-
-  collection of events\) and a queue of chunks, and its behavior can be
-
-  controlled by `<buffer>` section \(See the diagram below\).
-
-* **Asynchronous Buffered** mode also has "stage" and "queue", but
-
-  the output plugin will not commit writing chunks in methods
-
-  synchronously, but commit them later.
+* Fluentd output plugins' modes
+  * | v1.0, are
+    * **Non-Buffered** mode
+      * NOT buffer data
+      * write IMMEDIATELY out results
+    * **Synchronous Buffered** mode
+      * == "staged" buffer chunks + queue of chunks
+        * controlled -- by -- `<buffer>`
+    * **Asynchronous Buffered** mode
+      * == "stage" + "queue" /
+        * AFTERWARD, commit | chunks
+  * if there are
+    * 👀NO `<buffer>` sections -> choose AUTOMATICALLY, the appropriate mode👀 
+    * ⚠️`<buffer>` section | output plugins / NOT support buffering -> Fluentd will raise configuration errors⚠️
 
 ![Fluentd v1.0 Plugin API Overview](../.gitbook/assets/fluentd-v0.14-plugin-api-overview.png)
 
-Output plugins can support all the modes, but may support just one of these modes. Fluentd chooses appropriate mode automatically if there are no `<buffer>` sections in the configuration. If the users specify `<buffer>` section for the output plugins that do not support buffering, Fluentd will raise configuration errors.
+* [Buffer plugin](../buffer/)
+  * allows
+    * 👀define output plugin's buffer behavior 👀
+  * uses
+    * you can choose DIFFERENT buffer plugins / EACH output plugin
 
-Output plugins in v1 can control keys of buffer chunking by configurations, dynamically. Users can configure buffer chunk keys as time \(any unit specified by user\), tag and any key name of records. Output plugin will split events into chunks: events in a chunk have the same values for chunk keys. The output plugin's buffer behavior \(if any\) is defined by a separate [Buffer plugin](../buffer/). Different buffer plugins can be chosen for each output plugin.
-
-## List of Output Plugins
+## Output Plugins
 
 * [`out_copy`](copy.md)
 * [`out_null`](null.md)
@@ -46,15 +53,12 @@ Output plugins in v1 can control keys of buffer chunking by configurations, dyna
 * [`out_s3`](s3.md)
 * [`out_webhdfs`](webhdfs.md)
 
-## Other Plugins
+## Fluentd v1.0 vs v0.12
 
-See this list of available plugins to find out more about other Output plugins:
-
-* [other plugins](http://fluentd.org/plugin/)
-
-## Difference between v1.0 and v0.12
-
-Fluentd v0.12 uses only `<match>` section for both the configuration parameters of output and buffer plugins. Fluentd v1.0 uses `<buffer>` subsection to write parameters for buffering, flushing and retrying. `<match>` sections are used only for the output plugin itself.
+* TODO:
+Fluentd v0.12 uses only `<match>` section for both the configuration parameters of output and buffer plugins
+* Fluentd v1.0 uses `<buffer>` subsection to write parameters for buffering, flushing and retrying
+* `<match>` sections are used only for the output plugin itself.
 
 Example of v1.0 output plugin configuration:
 
@@ -303,6 +307,3 @@ The retry timings of `retry_max_times: 10` with the secondary.
 | 8th        | 255s    | primary       |
 | 9th        | 511s    | primary       |
 | 10th       | 818s    | secondary     |
-
-If this article is incorrect or outdated, or omits critical information, please [let us know](https://github.com/fluent/fluentd-docs-gitbook/issues?state=open). [Fluentd](http://www.fluentd.org/) is an open-source project under [Cloud Native Computing Foundation \(CNCF\)](https://cncf.io/). All components are available under the Apache 2 License.
-

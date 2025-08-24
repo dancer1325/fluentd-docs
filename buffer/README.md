@@ -1,44 +1,49 @@
 # Buffer Plugins
 
-Fluentd has nine \(9\) types of plugins:
-
-* [Input](../input/)
-* [Parser](../parser/)
-* [Filter](../filter/)
-* [Output](../output/)
-* [Formatter](../formatter/)
-* [Storage](../storage/)
-* [Service Discovery](../service_discovery/)
-* [Buffer](./)
-* [Metrics](../metrics/)
-
-This article gives an overview of Buffer Plugin.
+* goal
+  * Fluentd's Buffer Plugin
 
 ## Overview
 
-Buffer plugins are used by output plugins. For example, `out_s3` uses `buf_file` by default to store incoming stream temporally before transmitting to S3.
+* Buffer plugins
+  * are 
+    * pluggable
+      * == you can choose a suitable backend -- based on -- your system requirements 
+  * uses
+    * 👀by output plugins👀
+      * _Example:_ as lightweight container / fills it with incoming events -- from -- input sources
+        * if a chunk becomes full -> gets "shipped" -- to the -- destination 
 
-Buffer plugins are, as you can tell by the name, _pluggable_. So you can choose a suitable backend based on your system requirements.
+* chunk
+  * == collection of events / concatenated | 1! blob
+  * 👀is managed 1by1👀
+    * [`buf_file`](file.md) == -- via -- files
+    * [`buf_memory`](memory.md) == -- via -- continuous memory blocks
 
-## How Buffer Works
-
-A buffer is essentially a set of "chunks". A chunk is a collection of events concatenated into a single blob. Each chunk is managed one by one in the form of files \([`buf_file`](file.md)\) or continuous memory blocks \([`buf_memory`](memory.md)\).
-
-### The Lifecycle of Chunks
-
-You can think of a chunk as a cargo box. A buffer plugin uses a chunk as a lightweight container, and fills it with events incoming from input sources. If a chunk becomes full, then it gets "shipped" to the destination.
-
-Internally, a buffer plugin has two separated places to store its chunks: _"stage"_ where chunks get filled with events, and _"queue"_ where chunks wait before the transportation. Every newly-created chunk starts from _stage_, then proceeds to _queue_ in time \(and subsequently gets transferred to the destination\).
+* buffer
+  * == set of "chunks" / 
+    * stored |
+      * "stage"
+        * where chunks get filled -- with -- events
+      * "queue"
+        * where chunks wait BEFORE the transportation
+    * flow
+      * EACH NEW chunk starts -- from -- "stage"
+      * chunk proceeds -- to -- "queue"
+      * chunk gets transferred -- to the -- destination
 
 ![Fluentd-v0.14 Plugin API Overview](../.gitbook/assets/fluentd-v0.14-plugin-api-overview.png)
 
 ## Control Retry Behavior
 
-A chunk can fail to be written out to the destination for a number of reasons. The network can go down, or the traffic volumes can exceed the capacity of the destination node. To handle such common failures gracefully, buffer plugins are equipped with a built-in retry mechanism.
+* TODO: A chunk can fail to be written out to the destination for a number of reasons
+* The network can go down, or the traffic volumes can exceed the capacity of the destination node
+* To handle such common failures gracefully, buffer plugins are equipped with a built-in retry mechanism.
 
 ### How Exponential Backoff Works
 
-By default, Fluentd increases the wait interval exponentially for each retry attempt. For example, assuming that the initial wait interval is set to 1 second and the exponential factor is 2, each attempt occurs at the following time points:
+By default, Fluentd increases the wait interval exponentially for each retry attempt
+* For example, assuming that the initial wait interval is set to 1 second and the exponential factor is 2, each attempt occurs at the following time points:
 
 ```text
 0 1   3       7               15
@@ -211,10 +216,7 @@ Because the format of buffer chunk is different from output's payload. Let's use
 
 This sometimes causes a problem when the output destination has a payload size limitation. If you have a problem with the payload size issue, check chunk size configuration, and API spec.
 
-## List of Buffer Plugins
+## Buffer Plugins
 
 * [`buf_memory`](memory.md)
 * [`buf_file`](file.md)
-
-If this article is incorrect or outdated, or omits critical information, please [let us know](https://github.com/fluent/fluentd-docs-gitbook/issues?state=open). [Fluentd](http://www.fluentd.org/) is an open-source project under [Cloud Native Computing Foundation \(CNCF\)](https://cncf.io/). All components are available under the Apache 2 License.
-

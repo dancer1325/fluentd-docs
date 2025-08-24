@@ -1,61 +1,40 @@
 # Config: Buffer Section
 
-Fluentd output plugins support the `<buffer>` section to configure the buffering of events. The buffering is handled by the Fluentd core.
-
-## Buffer Section Overview
-
-Buffer section comes under the `<match>` section. It is enabled for those output plugins that support buffered output features.
-
-```text
-<match tag.*>
-  @type file
-  # ...
-  <buffer>
-    # ...
-  </buffer>
-
-  # <buffer> section can only be configured once!
-</match>
-```
-
-## Buffer Plugin Type
-
-The `@type` parameter of `<buffer>` section specifies the type of the buffer plugin:
-
-```text
-<buffer>
-  @type file
-</buffer>
-```
-
-Fluentd core bundles `file` and `memory` buffer plugins i.e.:
-
-* [`buf_file`](../buffer/file.md)
-* [`buf_memory`](../buffer/memory.md)
-
-Third-party plugins may also be installed and configured.
-
-However, the `@type` parameter is not mandatory. If omitted, by default, the buffer plugin specified by the output plugin is used \(if possible\). Otherwise, the `memory` buffer plugin is used.
-
-For the usual workload, the file buffer plugin is recommended. It is more durable for the general use-cases.
+* `<buffer>`
+  * allows
+    * configuring the buffering of events
+  * ⚠️placed under `<match>` / output plugins support buffered output features⚠️
+  
+    ```.conf
+    <match matchPattern>
+      @type someOutputPlugin
+      # ...
+      <buffer>
+        # ...
+      </buffer>
+    </match>
+    ```
 
 ## Chunk Keys
 
-The output plugins group events into chunks. Chunk keys, specified as the argument of `<buffer>` section, control how to group events into chunks.
+* output plugins
+  * group events | chunks
 
-```text
-<buffer ARGUMENT_CHUNK_KEYS>
-  # ...
-</buffer>
-```
+* chunk keys
+  * specified -- as -- `<buffer>`'s argument
+  * 👀control how to group events | chunks👀
 
-If specified, the chunk key arguments must be comma-separated strings.
+    ```.conf
+    <buffer ARGUMENT_CHUNK_KEY_1ARGUMENT_CHUNK_KEY_2,...>
+      # ...
+    </buffer>
+    ```
 
 ### Blank Chunk Keys
 
-In case of no or blank chunk key, the output plugin writes all the matched events into a single chunk until its size exceeds provided that the output plugin itself does not specify any default chunk keys.
+* TODO: In case of no or blank chunk key, the output plugin writes all the matched events into a single chunk until its size exceeds provided that the output plugin itself does not specify any default chunk keys.
 
-```text
+```.conf
 <match tag.**>
   # ...
   <buffer>      # <--- No chunk key specified as argument
@@ -74,7 +53,8 @@ In case of no or blank chunk key, the output plugin writes all the matched event
 
 ### Tag
 
-If a `tag` is specified as a chunk key, the output plugin writes events into chunks grouped by tag. Events with different tags will be written into different chunks.
+If a `tag` is specified as a chunk key, the output plugin writes events into chunks grouped by tag
+* Events with different tags will be written into different chunks.
 
 ```text
 <match tag.**>
@@ -117,7 +97,8 @@ For example:
 
   ...
 
-The events will be grouped into chunks by their time range. They will be flushed by the output plugin after the expiration of the time key range.
+The events will be grouped into chunks by their time range
+* They will be flushed by the output plugin after the expiration of the time key range.
 
 ```text
 <match tag.**>
@@ -137,9 +118,12 @@ The events will be grouped into chunks by their time range. They will be flushed
 12:00:25 ssh.login  {"key1":"yay","key2":100}  --|
 ```
 
-The `timekey_wait` parameter configures the flush delay for events. The default is 600 \(10 minutes\).
+The `timekey_wait` parameter configures the flush delay for events
+* The default is 600 \(10 minutes\).
 
-The event time is normally the delayed time from the current timestamp. Fluentd will wait to flush the buffered chunks for delayed events. For example, the figure below shows when the chunks \(timekey: 3600\) will be flushed actually, for sample `timekey_wait` values:
+The event time is normally the delayed time from the current timestamp
+* Fluentd will wait to flush the buffered chunks for delayed events
+* For example, the figure below shows when the chunks \(timekey: 3600\) will be flushed actually, for sample `timekey_wait` values:
 
 ```text
  timekey: 3600
@@ -152,7 +136,8 @@ The event time is normally the delayed time from the current timestamp. Fluentd 
 
 ### Other Keys
 
-The other \(non-time/non-tag\) keys are handled as the field names of records. The output plugin will group events into chunks by the value of these fields.
+The other \(non-time/non-tag\) keys are handled as the field names of records
+* The output plugin will group events into chunks by the value of these fields.
 
 ```text
 <match tag.**>
@@ -357,16 +342,52 @@ With `time`, the following parameters are available:
 
 ### `@type`
 
-The `@type` parameter specifies the type of the buffer plugin. The default type is `memory` for bare output plugin but it may be overridden by the output plugin implementations.
+* `@type` parameter
+  * == buffer plugin's type
+    * | bare output plugin, 
+      * `memory` 
 
-For example, the default is `file` buffer plugin for the `file` output plugin:
+        ```.conf
+        <match matchPattern>
+          # @type someOutputPlugin      # == bare output plugin
+          # ...
+          <buffer>
+            # ...
+          </buffer>
+        </match>
+        ```
 
-```text
-<buffer>
-  @type file
-  # ...
-</buffer>
-```
+    * | `file` output plugin,
+      * `file` buffer plugin 
+
+        ```.conf
+        <match matchPattern>
+          @type file
+          # ...
+          <buffer>
+            @type file
+            # ...
+          </buffer>
+        </match>
+        ```
+
+    ```.conf
+    <match matchPattern>
+      @type someOutputPlugin
+      # ...
+      <buffer>
+        @type typeOfBufferPlugin
+        # ...
+      </buffer>
+    </match>
+    ```
+  * ❌NOT MANDATORY❌
+    * if omitted, by default, 
+      * if POSSIBLE -> use buffer plugin / specified by the output plugin
+      * else -> use [`memory` buffer plugin](../buffer/memory.md)
+  * recommendations
+    * use [file buffer plugin](../buffer/file.md)
+      * Reason:🧠MORE durable | general use-cases🧠
 
 ### Buffering Parameters
 
@@ -552,6 +573,3 @@ With `exponential_backoff`, `retry_wait` interval will be calculated as below:
 * k: number of retry times
 * total retry time: `c + c*b^1 + (...) + c*b^(k-1) = c*(b^k - 1) / (b - 1)`
   * = `2^k - 1` by default
-
-If this article is incorrect or outdated, or omits critical information, please [let us know](https://github.com/fluent/fluentd-docs-gitbook/issues?state=open). [Fluentd](http://www.fluentd.org/) is an open-source project under [Cloud Native Computing Foundation \(CNCF\)](https://cncf.io/). All components are available under the Apache 2 License.
-
