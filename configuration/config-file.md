@@ -143,7 +143,7 @@ Sending a `SIGHUP` signal will reload the config file.
 ### 3. `filter`
 
 * responsible for
-  * filtering events / match tags
+  * 👀filtering events / match tags👀
     * 💡filter plugins == plugins / correspond -- to the -- `filter` directive💡
     * see [match patterns](#how-do-the-match-patterns-work)
 
@@ -152,6 +152,7 @@ Sending a `SIGHUP` signal will reload the config file.
 
     ```text
     Input -> filter 1 -> ... -> filter N -> Output
+    * if there are MULTIPLE filters | SAME tag -> 👀applied | descending order👀
     ```
 
 ```.conf
@@ -162,7 +163,11 @@ Sending a `SIGHUP` signal will reload the config file.
 ```
 
 * vs `match`
-  * 👀`filter` can be chained👀
+  * `filter``
+    * 👀can be chained👀
+    * ❌NOT process events by themselves❌
+  * `match`
+    * ⚠️process events by themselves⚠️
 
 * _Example:_ [here](examples/configFile/filter)
 
@@ -191,7 +196,7 @@ Sending a `SIGHUP` signal will reload the config file.
       * `<match>`👀
   * reduces `tag` handling's complexity 
 
-* == builtin plugin parameter
+* == built-in plugin parameter
   * -> requires `@` prefix
 
 * uses

@@ -64,9 +64,8 @@ Former is easier approach.
 
 ### I got `no patterns matched` in the log, why?
 
-This means that the event is emitted but there is no `<match>` directive for it. For example, if you emit the event with `foo.bar` tag, you need to define `<match>` for `foo.bar` tag like `<match foo.**>`.
-
-See also: [Lifecycle of a Fluentd event](life-of-a-fluentd-event.md) or [Config File](../configuration/config-file.md)
+* Reason: 🧠 event is emitted BUT NOT EXIST `<match>` directive🧠 
+  * _Example:_ if you emit the event / `foo.bar` tag -> you need to define `<match foo.**>`
 
 ### File buffer does not work properly, why?
 

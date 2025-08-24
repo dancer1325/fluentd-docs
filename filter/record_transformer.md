@@ -1,20 +1,12 @@
 # record\_transformer
 
-The `filter_record_transformer` filter plugin mutates/transforms incoming event streams in a versatile manner. If there is a need to add/delete/modify events, this plugin is the first filter to try.
-
-It is included in the Fluentd's core.
+* `filter_record_transformer` 
+  * == filter plugin /
+    * 👀incoming event streams are mutated/transformed -- via -- versatile manner👀
+    * uses
+      * add/delete/modify events
 
 ## Example Configurations
-
-```text
-<filter foo.bar>
-  @type record_transformer
-  <record>
-    hostname "#{Socket.gethostname}"
-    tag ${tag}
-  </record>
-</filter>
-```
 
 The above filter adds the new field `hostname` with the server's hostname as its value \(It is taking advantage of Ruby's string interpolation\) and the new field `tag` with tag value.
 
@@ -54,7 +46,9 @@ into
 {"total":100, "count":10, "avg":"10"}
 ```
 
-With the `enable_ruby` option, an arbitrary Ruby expression can be used inside `${...}`. Note that the `avg` field is typed as a string in this example. You may use `auto_typecast true` option to treat the field as a float.
+With the `enable_ruby` option, an arbitrary Ruby expression can be used inside `${...}`
+* Note that the `avg` field is typed as a string in this example
+* You may use `auto_typecast true` option to treat the field as a float.
 
 You can also use this plugin to modify your existing fields as:
 
@@ -79,7 +73,8 @@ is transformed into
 {"message":"yay, hello world!"}
 ```
 
-Finally, this configuration embeds the value of the second part of the tag in the field `service_name`. It might come in handy when aggregating data across many services.
+Finally, this configuration embeds the value of the second part of the tag in the field `service_name`
+* It might come in handy when aggregating data across many services.
 
 ```text
 <filter web.*>
@@ -94,49 +89,48 @@ So, if an event with the tag `web.auth` and record `{"user_id":1, "status":"ok"}
 
 ## Parameters
 
-See [Common Parameters](../configuration/plugin-common-parameters.md).
+* [Common Parameters](../configuration/plugin-common-parameters.md)
 
 ### `@type`
 
-The value must be `record_transformer`.
+* == `record_transformer`
 
 ### `<record>` directive
 
-The parameters inside `<record>` directives are considered to be new key-value pairs:
+* 's parameters == 💡NEW key-value pairs💡
 
-```text
+```conf
 <record>
   NEW_FIELD NEW_VALUE
 </record>
 ```
-
-For `NEW_FIELD` and `NEW_VALUE`, a special syntax `${}` allows the user to generate a new field dynamically. Inside the curly braces, the following variables are available:
-
-* The incoming event's existing values can be referred by their field
-
-  names. So, if the record is `{"total":100, "count":10}`, then
-
-  `record["total"]=100` and `record["count"]=10`.
-
-* `tag` refers to the whole tag.
-* `time` refers to stringified event time.
-* `hostname` refers to the machine's hostname. The actual value is the result of
-
-  [`Socket.gethostname`](https://docs.ruby-lang.org/en/trunk/Socket.html#method-c-gethostname).
-
-You can also access to a certain portion of a tag using the following notations:
-
-* `tag_parts[N]` refers to the `Nth` part of the tag.
-* `tag_prefix[N]` refers to the `[0..N]` part of the tag.
-* `tag_suffix[N]` refers to the `[N..]` part of the tag.
-
-All indices are zero-based. For example, if you have an incoming event tagged `debug.my.app`, then `tag_parts[1]` will represent `my`. Also in this case, `tag_prefix[N]` and `tag_suffix[N]` will work as follows:
-
-```text
-tag_prefix[0] = debug          tag_suffix[0] = debug.my.app
-tag_prefix[1] = debug.my       tag_suffix[1] = my.app
-tag_prefix[2] = debug.my.app   tag_suffix[2] = app
-```
+* `NEW_FIELD` & `NEW_VALUE`
+  * syntax
+    * static value
+    * `${specificVariables}`
+      * DYNAMIC
+      * 👀ALLOWED `specificVariables`👀
+        * `tag`
+          * == WHOLE tag
+          * if you want to access | portion of a tag
+            * `tag_parts[N]`
+              * == `Nth` part of the tag
+            * `tag_prefix[N]`
+              * == `[0..N]` part of the tag
+            * `tag_suffix[N]`
+              * == `[N..]` part of the tag
+        * `time`
+          * == stringified event time
+        * `hostname`
+          * == machine's hostname
+          * [`Socket.gethostname`](https://docs.ruby-lang.org/en/trunk/Socket.html#method-c-gethostname)
+            * == CURRENT value 
+  * uses
+    * refer to them
+      ```.conf
+      record["SOME_NEW_FIELD"]
+      record["SOME_NEW_VALUE"]
+      ```
 
 ### `enable_ruby`
 
@@ -297,10 +291,3 @@ ${record.dig("top", "nest1", "nest2")}
 ### I got `unknown placeholder ${record['msg']} found` error, why?
 
 Without `enable_ruby`, `${}` placeholder supports only double-quoted string for record field access. So, use `${record["key"]}` instead of `${record['key']}`. This could also happen when the input does not contain `key`.
-
-## Learn More
-
-* [Filter Plugin Overview](./)
-
-If this article is incorrect or outdated, or omits critical information, please [let us know](https://github.com/fluent/fluentd-docs-gitbook/issues?state=open). [Fluentd](http://www.fluentd.org/) is an open-source project under [Cloud Native Computing Foundation \(CNCF\)](https://cncf.io/). All components are available under the Apache 2 License.
-
